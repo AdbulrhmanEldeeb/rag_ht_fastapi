@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heat Treatment Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .container { width: 100%; max-width: 500px; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        .title { font-size: 24px; text-align: center; margin-bottom: 20px; }
+        .input-field, .output { margin-bottom: 15px; }
+        .btn { display: block; width: 100%; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Heat Treatment Chatbot</div>
+        <div class="input-field">
+            <input type="file" id="pdfInput" multiple>
+            <button class="btn" onclick="uploadFiles()">Upload PDFs</button>
+        </div>
+        <div class="input-field">
+            <input type="text" id="questionInput" placeholder="Ask a question..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+            <button class="btn" onclick="askQuestion()">Ask</button>
+        </div>
+        <div class="output">
+            <p id="responseOutput"></p>
+        </div>
+    </div>
+
+    <script>
+        async function uploadFiles() {
+            const input = document.getElementById('pdfInput');
+            const files = input.files;
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+
+            try {
+                const response = await fetch("http://localhost:8000/upload/", {
+                    method: "POST",
+                    body: formData
+                });
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error("Error uploading files:", error);
+                alert("Error uploading files.");
+            }
+        }
+
+        async function askQuestion() {
+            const question = document.getElementById('questionInput').value;
+
+            if (!question) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8000/ask/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+                const result = await response.json();
+                document.getElementById('responseOutput').innerText = result.answer;
+            } catch (error) {
+                console.error("Error asking question:", error);
+                alert("Error asking question.");
+            }
+        }
+    </script>
+</body>
+</html>
