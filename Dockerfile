@@ -1,5 +1,5 @@
 # Use a slim version of Python 3.12 as the base image
-FROM python:3.12.0-slim AS builder
+FROM python:3.12-slim AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the installed packages from the builder stage
-FROM python:3.12.0-slim
+FROM python:3.12-slim
 WORKDIR /app
 COPY --from=builder /app /app
 COPY . .
@@ -22,7 +22,6 @@ ENV GROQ_API_KEY='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'
 ENV HUGGINGFACEHUB_API_TOKEN='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'
 
 # Specify the command to run the application
-ENTRYPOINT ["uvicorn", "src.main:app"]
 
 # Set default command-line arguments for the ENTRYPOINT
-CMD ["--port", "8080", "--host", "0.0.0.0"]
+CMD ["python","src/main.py"]

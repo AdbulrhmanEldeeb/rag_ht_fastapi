@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import List
 import os
+import uvicorn
 import time
 from langchain_groq import ChatGroq
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -15,7 +16,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFLoader
-from .config import Config
+from config import Config
 
 app = FastAPI()
 
@@ -71,6 +72,10 @@ def process_documents(pdf_files: List[UploadFile]):
     vectors.save_local(Config.EMBEDDINGS_DIR)
     return "Documents processed successfully"
 
+
+@app.get('/')
+async def health_check():
+    return {'health_check':'ok'} 
 # Endpoint to upload PDFs and create embeddings
 @app.post("/upload/")
 async def upload_files(files: List[UploadFile]):
@@ -90,3 +95,7 @@ async def ask_question(request: QuestionRequest):
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
     response = retrieval_chain.invoke({"input": request.question})
     return {"answer": response["answer"], "context": response["context"]}
+
+
+if __name__=='__main__': 
+    uvicorn.run(app,port='8080',host='0.0.0.0')
