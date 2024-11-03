@@ -17,10 +17,6 @@
     <div class="container">
         <div class="title">Heat Treatment Chatbot</div>
         <div class="input-field">
-            <input type="file" id="pdfInput" multiple>
-            <button class="btn" onclick="uploadFiles()">Upload PDFs</button>
-        </div>
-        <div class="input-field">
             <input type="text" id="questionInput" placeholder="Ask a question..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
             <button class="btn" onclick="askQuestion()">Ask</button>
         </div>
@@ -30,28 +26,6 @@
     </div>
 
     <script>
-        async function uploadFiles() {
-            const input = document.getElementById('pdfInput');
-            const files = input.files;
-            const formData = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files', files[i]);
-            }
-
-            try {
-                const response = await fetch("http://localhost:8000/upload/", {
-                    method: "POST",
-                    body: formData
-                });
-                const result = await response.json();
-                alert(result.message);
-            } catch (error) {
-                console.error("Error uploading files:", error);
-                alert("Error uploading files.");
-            }
-        }
-
         async function askQuestion() {
             const question = document.getElementById('questionInput').value;
 
