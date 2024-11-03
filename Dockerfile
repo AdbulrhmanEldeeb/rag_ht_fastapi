@@ -1,5 +1,5 @@
 # Use a slim version of Python 3.12 as the base image
-FROM python:3.12-slim AS builder
+FROM python:3.12.0-slim AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the installed packages from the builder stage
-FROM python:3.12-slim
+FROM python:3.12.0-slim
 WORKDIR /app
 COPY --from=builder /app /app
 COPY . .
